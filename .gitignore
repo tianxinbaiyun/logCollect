@@ -1,0 +1,22 @@
+# lib directory and file
+github.com/
+go.etcd.io/
+gopkg.in/
+test/
+
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+.idea
+logAgent/logs/*.log
+logManager/logs/*.log
+logTransfer/logs/*.log
