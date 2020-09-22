@@ -1,4 +1,4 @@
-package main
+package agent
 
 import (
 	"context"
@@ -25,7 +25,8 @@ var (
 )
 
 // 初始化etcd
-func initEtcd(etcdAddress []string, collectKey string) (err error) {
+func InitEtcd(etcdAddress []string, collectKey string) (err error) {
+	agentConfig, _ = LoadConfig()
 	client, err := etcd.New(etcd.Config{
 		Endpoints:   etcdAddress,
 		DialTimeout: 5 * time.Second,

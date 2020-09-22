@@ -1,8 +1,8 @@
-package main
+package agent
 
 import (
 	"errors"
-	"fmt"
+	"github.com/astaxie/beego/logs"
 	"github.com/tianxinbaiyun/logCollect/logAgent/tailf"
 	"os"
 	"strings"
@@ -28,16 +28,29 @@ var (
 )
 
 // 加载配置信息
-func loadConfig(configType, configPath string) (err error) {
-	conf, err := config.NewConfig(configType, configPath)
+func LoadConfig() (agentConfig *Config, err error) {
+	// 获取配置文件路径
+	configPath, err := GetConfigPath()
+	if err != nil {
+		logs.Error("get config file failed, err: %s", err)
+		return
+	}
+	logs.Debug("get config file success, file: %s", configPath)
+
+	filePath := GetExecpath() + "/" + configPath
+
+	//配置文件不存在，从配置文件指定的目录找
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		filePath = GetCurrentPath() + "/../" + configPath
+	}
+	conf, err := config.NewConfig(configType, filePath)
 	if err != nil {
 		return
 	}
-
 	agentConfig = &Config{}
 
 	// 获取基础配置
-	err = getAgentConfig(conf)
+	err = getAgentConfig(conf, agentConfig)
 	if err != nil {
 		return
 	}
@@ -45,7 +58,21 @@ func loadConfig(configType, configPath string) (err error) {
 	return
 }
 
-func getAgentConfig(conf config.Configer) (err error) {
+// 根据传参的方式获取配置文件路径
+func GetConfigPath() (configPath string, err error) {
+	cmdArgs := os.Args
+	if len(cmdArgs) < 2 {
+		configPath = "config/app.ini"
+		//err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
+		//return
+	} else {
+		configPath = cmdArgs[1]
+	}
+
+	return
+}
+
+func getAgentConfig(conf config.Configer, agentConfig *Config) (err error) {
 	// 获取日志级别
 	logLevel := conf.String("base::log_level")
 	if len(logLevel) == 0 {
@@ -91,16 +118,5 @@ func getAgentConfig(conf config.Configer) (err error) {
 	}
 	agentConfig.CollectKey = collectKey
 
-	return
-}
-
-// 通过传参的方式获取配置文件的路径
-func getConfigPath() (err error) {
-	cmdArgs := os.Args
-	if len(cmdArgs) < 2 {
-		err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
-		return
-	}
-	configPath = cmdArgs[1]
 	return
 }

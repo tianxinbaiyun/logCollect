@@ -1,4 +1,4 @@
-package main
+package agent
 
 import (
 	"encoding/json"
@@ -24,7 +24,8 @@ func caseLogLevel(level string) (logLevel int) {
 }
 
 // 初始化日志
-func initAgentLog() (err error) {
+func InitAgentLog() (err error) {
+	agentConfig, _ := LoadConfig()
 	logConfig := make(map[string]interface{})
 	logConfig["filename"] = agentConfig.LogPath
 	logConfig["level"] = caseLogLevel(agentConfig.LogLevel)

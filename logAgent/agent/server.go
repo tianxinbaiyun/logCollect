@@ -1,4 +1,4 @@
-package main
+package agent
 
 import (
 	"encoding/json"
@@ -10,7 +10,7 @@ import (
 )
 
 // 启动logagent服务
-func serverRun() (err error) {
+func ServerRun() (err error) {
 	logs.Info("Log Agent start is running...")
 	for true {
 		// 获取一行日志数据

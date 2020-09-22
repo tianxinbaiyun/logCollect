@@ -51,6 +51,20 @@ func LoadConfig() (transferConfig *Config, err error) {
 	return
 }
 
+// 根据传参的方式获取配置文件路径
+func GetConfigPath() (configPath string, err error) {
+	cmdArgs := os.Args
+	if len(cmdArgs) < 2 {
+		configPath = "config/app.ini"
+		//err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
+		//return
+	} else {
+		configPath = cmdArgs[1]
+	}
+
+	return
+}
+
 func getTransgerConfig(conf config.Configer, transferConfig *Config) (err error) {
 	// 获取日志级别
 	logLevel := conf.String("base::log_level")
@@ -100,20 +114,6 @@ func getTransgerConfig(conf config.Configer, transferConfig *Config) (err error)
 		return
 	}
 	transferConfig.EsAddress = strings.Split(esAddress, ",")
-
-	return
-}
-
-// 根据传参的方式获取配置文件路径
-func GetConfigPath() (configPath string, err error) {
-	cmdArgs := os.Args
-	if len(cmdArgs) < 2 {
-		configPath = "config/logTransger.ini"
-		//err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
-		//return
-	} else {
-		configPath = cmdArgs[1]
-	}
 
 	return
 }
