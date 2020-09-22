@@ -1,4 +1,4 @@
-package main
+package transfer
 
 import (
 	"context"
@@ -27,7 +27,7 @@ var (
 )
 
 // 初始化etcd
-func initEtcd(etcdAddress []string) (err error) {
+func InitEtcd(etcdAddress []string) (err error) {
 	client, err := etcd.New(etcd.Config{
 		Endpoints:   etcdAddress,
 		DialTimeout: 5 * time.Second,
@@ -52,6 +52,7 @@ func initEtcd(etcdAddress []string) (err error) {
 
 // 获取etcd中topics列表
 func getTopics() (err error) {
+	transferConfig, _ := LoadConfig()
 	ctx, cancle := context.WithTimeout(context.Background(), time.Second)
 	resp, err := etcdClient.client.Get(ctx, topicsName)
 	cancle()

@@ -1,8 +1,8 @@
-package main
+package transfer
 
 import (
 	"errors"
-	"fmt"
+	"github.com/astaxie/beego/logs"
 	"os"
 	"strings"
 
@@ -20,15 +20,23 @@ type Config struct {
 	Topics       []string
 }
 
-var (
-	// 配置文件对象
-	transferConfig *Config
-)
-
 // 加载配置文件配置
-func loadConfig(configType, configPath string) (err error) {
+func LoadConfig() (transferConfig *Config, err error) {
+	// 获取配置文件路径
+	configPath, err := GetConfigPath()
+	if err != nil {
+		logs.Error("get config file failed, err: %s", err)
+		return
+	}
+	logs.Debug("get config file success, file: %s", configPath)
 
-	conf, err := config.NewConfig(configType, configPath)
+	filePath := GetExecpath() + "/" + configPath
+
+	//配置文件不存在，从配置文件指定的目录找
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		filePath = GetCurrentPath() + "/../" + configPath
+	}
+	conf, err := config.NewConfig(configType, filePath)
 	if err != nil {
 		return
 	}
@@ -36,14 +44,14 @@ func loadConfig(configType, configPath string) (err error) {
 	transferConfig = &Config{}
 
 	// 获取基础配置
-	err = getTransgerConfig(conf)
+	err = getTransgerConfig(conf, transferConfig)
 	if err != nil {
 		return
 	}
 	return
 }
 
-func getTransgerConfig(conf config.Configer) (err error) {
+func getTransgerConfig(conf config.Configer, transferConfig *Config) (err error) {
 	// 获取日志级别
 	logLevel := conf.String("base::log_level")
 	if len(logLevel) == 0 {
@@ -54,7 +62,11 @@ func getTransgerConfig(conf config.Configer) (err error) {
 	// 获取日志路径
 	logPath := conf.String("base::log_path")
 	if len(logPath) == 0 {
-		logPath = "/Users/aery/Data/code/Go/go_old/logs/logagent.log"
+		logPath = GetExecpath() + "/logs/logtransfer.log"
+		//配置文件不存在，从配置文件指定的目录找
+		if _, err := os.Stat(logPath); os.IsNotExist(err) {
+			logPath = GetCurrentPath() + "/../logs/logtransfer.log"
+		}
 	}
 	transferConfig.LogPath = logPath
 
@@ -93,12 +105,15 @@ func getTransgerConfig(conf config.Configer) (err error) {
 }
 
 // 根据传参的方式获取配置文件路径
-func getConfigPath() (err error) {
+func GetConfigPath() (configPath string, err error) {
 	cmdArgs := os.Args
 	if len(cmdArgs) < 2 {
-		err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
-		return
+		configPath = "config/logTransger.ini"
+		//err = fmt.Errorf("USAGE: %v  <agent config file>, go to start the log agent.", cmdArgs[0])
+		//return
+	} else {
+		configPath = cmdArgs[1]
 	}
-	configPath = cmdArgs[1]
+
 	return
 }

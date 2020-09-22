@@ -1,4 +1,4 @@
-package main
+package transfer
 
 import (
 	"github.com/tianxinbaiyun/logCollect/logTransfer/elasticsearch"
@@ -15,16 +15,8 @@ var (
 func main() {
 	var err error
 
-	// 获取配置文件路径
-	err = getConfigPath()
-	if err != nil {
-		logs.Error("get config file failed, err: %s", err)
-		return
-	}
-	logs.Debug("get config file success, file: %s", configPath)
-
 	// 加载配置文件
-	err = loadConfig(configType, configPath)
+	transferConfig, err := LoadConfig()
 	if err != nil {
 		logs.Error("load config failed, err:%s", err)
 		return
@@ -32,7 +24,7 @@ func main() {
 	logs.Debug("load log transfer success")
 
 	// 初始化日志
-	err = initTransgerLog()
+	err = InitTransgerLog()
 	if err != nil {
 		logs.Error("init log failed, err:%s", err)
 		return
@@ -40,7 +32,7 @@ func main() {
 	logs.Debug("init transfer log success")
 
 	// 初始化etcd
-	err = initEtcd(transferConfig.EtcdAddress)
+	err = InitEtcd(transferConfig.EtcdAddress)
 	if err != nil {
 		logs.Error("init etcd failed, err:%s", err)
 		return
@@ -64,7 +56,7 @@ func main() {
 	logs.Debug("init transger kafka success")
 
 	// 启动服务
-	err = serverRun()
+	err = ServerRun()
 	if err != nil {
 		logs.Error("server run failed, err: %s", err)
 		return

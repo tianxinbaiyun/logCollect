@@ -1,4 +1,4 @@
-package main
+package transfer
 
 import (
 	"github.com/tianxinbaiyun/logCollect/logTransfer/elasticsearch"
@@ -7,7 +7,7 @@ import (
 )
 
 // 启动服务
-func serverRun() (err error) {
+func ServerRun() (err error) {
 	logs.Info("Log Transfer start is running...")
 	for true {
 		// 获取一条日志消息

@@ -1,4 +1,4 @@
-package main
+package transfer
 
 import (
 	"encoding/json"
@@ -24,7 +24,8 @@ func caseLogLevel(level string) (logLevel int) {
 }
 
 // 初始化日志
-func initTransgerLog() (err error) {
+func InitTransgerLog() (err error) {
+	transferConfig, _ := LoadConfig()
 	logConfig := make(map[string]interface{})
 	logConfig["filename"] = transferConfig.LogPath
 	logConfig["level"] = caseLogLevel(transferConfig.LogLevel)
