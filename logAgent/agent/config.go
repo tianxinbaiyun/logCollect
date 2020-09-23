@@ -10,6 +10,8 @@ import (
 	"github.com/astaxie/beego/config"
 )
 
+const configType = "ini"
+
 // 存储logAgent配置信息
 type Config struct {
 	LogLevel     string

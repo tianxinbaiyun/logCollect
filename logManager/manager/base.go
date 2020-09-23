@@ -1,4 +1,4 @@
-package main
+package manager
 
 import (
 	"errors"
@@ -7,11 +7,10 @@ import (
 	"strings"
 
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/logs"
 )
 
 // 初始化mysq
-func initMysql() (err error) {
+func InitMysql() (err error) {
 	mysqlInfo := models.MysqlInfo{
 		Address:  beego.AppConfig.String("mysqladdr"),
 		Port:     beego.AppConfig.String("mysqlport"),
@@ -27,7 +26,7 @@ func initMysql() (err error) {
 }
 
 // 初始化etcd
-func initEtcd() (err error) {
+func InitEtcd() (err error) {
 	address := beego.AppConfig.String("etcdaddr")
 	if len(address) == 0 {
 		errors.New("etcd addresss config error")
@@ -39,26 +38,4 @@ func initEtcd() (err error) {
 		return
 	}
 	return
-}
-
-func main() {
-	var err error
-
-	// 初始化log
-	err = initLog()
-	if err != nil {
-		logs.Error("init log manager failed, err: %s", err)
-	}
-	// 初始化mysql
-	err = initMysql()
-	if err != nil {
-		logs.Error("init mysql failed, err: %s", err)
-	}
-	// 初始化etcd
-	err = initEtcd()
-	if err != nil {
-		logs.Error("init etcd failed, err: %s", err)
-	}
-
-	beego.Run()
 }

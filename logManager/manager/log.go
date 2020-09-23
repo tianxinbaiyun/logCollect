@@ -1,4 +1,4 @@
-package main
+package manager
 
 import (
 	"encoding/json"
@@ -9,7 +9,7 @@ import (
 )
 
 // 获取日志级别
-func caseLogLevel(level string) (logLevel int) {
+func CaseLogLevel(level string) (logLevel int) {
 	switch level {
 	case "debug":
 		logLevel = logs.LevelDebug
@@ -26,12 +26,12 @@ func caseLogLevel(level string) (logLevel int) {
 }
 
 // 初始化日志
-func initLog() (err error) {
+func InitLog() (err error) {
 	logLevel := beego.AppConfig.String("loglevel")
 	logFile := beego.AppConfig.String("logfile")
 	logConfig := make(map[string]interface{})
 	logConfig["filename"] = logFile
-	logConfig["level"] = caseLogLevel(logLevel)
+	logConfig["level"] = CaseLogLevel(logLevel)
 	logConfig["color"] = true
 
 	logConfigString, err := json.Marshal(logConfig)

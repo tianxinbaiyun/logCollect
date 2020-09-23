@@ -53,7 +53,7 @@ func InitEtcd(etcdAddress []string) (err error) {
 // 获取etcd中topics列表
 func getTopics() (err error) {
 	transferConfig, _ := LoadConfig()
-	ctx, cancle := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancle := context.WithTimeout(context.Background(), time.Second*10)
 	resp, err := etcdClient.client.Get(ctx, topicsName)
 	cancle()
 	if err != nil {

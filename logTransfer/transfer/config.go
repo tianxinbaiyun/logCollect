@@ -9,6 +9,8 @@ import (
 	"github.com/astaxie/beego/config"
 )
 
+const configType = "ini"
+
 // 配置文件结构体
 type Config struct {
 	LogLevel     string
@@ -75,7 +77,7 @@ func getTransgerConfig(conf config.Configer, transferConfig *Config) (err error)
 
 	// 获取日志路径
 	logPath := conf.String("base::log_path")
-	if len(logPath) == 0 {
+	if _, err := os.Stat(logPath); os.IsNotExist(err) {
 		logPath = GetExecpath() + "/logs/logtransfer.log"
 		//配置文件不存在，从配置文件指定的目录找
 		if _, err := os.Stat(logPath); os.IsNotExist(err) {
